@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>设置页</title>
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="css/bootstrap01.css" rel="stylesheet" type="text/css">
+    <link href="css/bootstrapValidator.css" rel="stylesheet">
+    <link href="css/bootstrapValidator.min.css" rel="stylesheet">
+    <script src="js/bootstrapValidator.js"></script>
+    <script src="js/bootstrapValidator.min.js"></script>
+    <script src="js/jquery.form.js"></script>
+    <style>
+        .panel{
+            width: 1150px;
+        }
+    </style>
+</head>
+<body>
+<div class="container" style="margin-top: 200px">
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h3 class="panel-title">添加新型号</h3>
+        </div>
+        <div class="panel-body">
+            <form class="form-inline" role="form" th:action="@{/add}" th:method="post" id="form1"
+                  onsubmit="checkForm1();">
+                <label>产品型号：</label><input name="produceName" id="produceName" type="text"
+                                           oninput="validateFeeling(this)" required autocomplete="off"/>
+                <label>机器编号：</label><input name="machine" id="machine" type="text" onfocus="isExist()"
+                                           oninput="validateFeeling(this)" required/>
+                <label>计划产量(板数)：</label><input name="planNum" id="planNum" type="text" onfocus="isExist()"
+                                               oninput="validateFeeling(this)" required/>
+                <label>PCB板倍数：</label><input name="multiple" id="multiple" type="text" onfocus="isExist()"
+                                             oninput="validateFeeling(this)" required>
+                <input type="submit" value="添加" onclick="return isExist();">
+            </form>
+        </div>
+    </div>
+    <div class="panel panel-warning">
+        <div class="panel-heading">
+            <h3 class="panel-title">修改产量</h3>
+        </div>
+        <label>产品型号：</label>
+        <div class="panel-body">
+            <form class="form-inline" role="form" th:action="@{/update}" th:method="get" onsubmit="checkForm2();">
+
+                <select name="id">
+                    <option th:each="smdProductionPlan:${testCodes}" th:text="${smdProductionPlan.produceName}"
+                            th:value="${smdProductionPlan.id}"></option>
+                </select>
+                <label>计划产量：</label>
+                <input type="text" name="planNum" id="changePlanNum" onselect="validateFeeling(this)" required>
+                <input type="submit" value="修改">
+            </form>
+        </div>
+    </div>
+    <div class="panel panel-danger">
+        <div class="panel-heading">
+            <h3 class="panel-title">删除型号</h3>
+        </div>
+        <div class="panel-body">
+            <form class="form-inline" role="form" th:action="@{/delete}" th:method="get" onsubmit="checkForm3();">
+                <label>产品型号：</label>
+                <select name="id" id="deleteId">
+                    <option th:each="smdProductionPlan:${testCodes}" th:text="${smdProductionPlan.produceName}"
+                            th:value="${smdProductionPlan.id}" onselect="validateFeeling(this)"
+                            th:required="请务必选择"></option>
+                </select>
+                <input type="submit" value="删除">
+            </form>
+        </div>
+    </div>
+    <div style="text-align: center">
+        <button type="button" class="btn btn-info" onclick="goBack();">返回展示页</button>
+    </div>
+
+</div>
+</body>
+<script>
+    function validateFeeling(input) {
+        if (input.value == " ") {
+            input.setCustomValidity('此项为必填');
+            return false;
+        }
+    }
+
+    function checkForm1() {
+        var con;
+        var produceName = document.getElementById('produceName').value;
+        var machine = document.getElementById('machine').value;
+        var multiple = document.getElementById("multiple").value;
+        var planNum = document.getElementById('planNum').value;
+        con = confirm("请确认您输入的信息\n" + "产品型号：" + produceName + "\n" + "机器编号：" + machine + "\n" + "计划产量(板数)：" + planNum + "\n" + "PCB板倍数：" + multiple); //在页面上弹出对话框
+        if (con == true) {
+            alert("添加成功！！！");
+            return true;
+        } else {
+            event.preventDefault();
+            return false;
+        }
+    }
+
+    function checkForm2() {
+        var con;
+        var planNum = document.getElementById('changePlanNum').value;
+        con = confirm("请确认您要修改的信息\n" + "计划产量(板数)：" + planNum); //在页面上弹出对话框
+        if (con == true) {
+            alert("修改成功！！！");
+            return true;
+        } else {
+            event.preventDefault();
+            return false;
+        }
+    }
+
+    function checkForm3() {
+        var con;
+        var obj = document.getElementById("deleteId"); //定位id
+        var index1 = obj.selectedIndex;//定位下标
+        var produceName = obj.options[index1].text;
+        con = confirm("请确认您要删除的信息\n" + "产品型号：" + produceName); //在页面上弹出对话框
+        if (con == true) {
+            alert("删除成功！！！");
+            return true;
+        } else {
+            event.preventDefault();
+            return false;
+        }
+    }
+
+    function goBack() {
+        window.location.href = "/index";
+    }
+
+    function isExist() {
+        var produceName = document.getElementById("produceName").value;
+        $("#form1").ajaxSubmit({
+            url: "isExist",
+            type: "post",
+            data: {"produceName": produceName},
+            dateType: "String",
+            success: function (data) {
+                if (data == "yes") {
+                    alert("型号已存在,请重新输入新型号，或修改已存在型号！！！");
+                    document.getElementById("produceName").value = "";
+                    document.getElementById("planNum").value = "";
+                    document.getElementById("machine").value = "";
+                    document.getElementById("multiple").value = "";
+                    document.getElementById("produceName").onfocus();
+                }
+            }
+        });
+    }
+</script>
+</html>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdqn.dao.CodeMapper">
+    <select id="getAllLightCode" resultType="Code">
+        SELECT t.multiple AS 'multiple',t.id AS 'id',t.machine AS 'machine',t.produceName AS 'produceName', t.planNum AS 'planNum',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '08' THEN num ELSE NULL END)*t.multiple AS  'time8',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '09' THEN num ELSE NULL END)*t.multiple AS  'time9',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '10' THEN num ELSE NULL END)*t.multiple AS  'time10',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '11' THEN num ELSE NULL END)*t.multiple AS  'time11',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '12' THEN num ELSE NULL END)*t.multiple AS  'time12',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '13' THEN num ELSE NULL END)*t.multiple AS  'time13',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '14' THEN num ELSE NULL END)*t.multiple AS  'time14',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '15' THEN num ELSE NULL END)*t.multiple AS  'time15',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '16' THEN num ELSE NULL END)*t.multiple AS  'time16',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '17' THEN num ELSE NULL END)*t.multiple AS  'time17',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '18' THEN num ELSE NULL END)*t.multiple AS  'time18',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '19' THEN num ELSE NULL END)*t.multiple AS  'time19',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '20' THEN num ELSE NULL END)*t.multiple AS  'time20',
+        (
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '08' THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '09' THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '10' THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '11' THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '12' THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '13' THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '14' THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '15' THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '16' THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '17' THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '18' THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '19' THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '20' THEN num ELSE 0 END)
+        )*t.multiple AS 'sum' FROM smdproductionplan t,smddata r
+        WHERE DATE_FORMAT(r.currentTime,'%Y%m%d')=DATE_FORMAT(NOW(),'%Y%m%d') AND t.`produceName`=r.`model` AND DATE_FORMAT(r.currentTime,'%H') IN (8,9,10,11,12,13,14,15,16,17,18,19,20)
+            GROUP BY t.produceName
+            LIMIT #{currentPage},#{num}
+     </select>
+    <select id="getAllLightCodeCount" resultType="int">
+        SELECT COUNT(1) FROM (SELECT t.multiple AS 'multiple',t.id AS 'id',t.produceName AS 'produceName', t.planNum AS 'planNum',COUNT(HOUR(r.`currentTime`)='8' OR NULL )*multiple AS 'time8',COUNT(HOUR(r.currentTime)='9' OR NULL )*multiple AS 'time9',COUNT(HOUR(r.currentTime)='10' OR NULL )*multiple AS 'time10',COUNT(HOUR(r.currentTime)='11' OR NULL )*multiple AS 'time11',COUNT(HOUR(r.currentTime)='12' OR NULL )*multiple AS 'time12',COUNT(HOUR(r.currentTime)='13' OR NULL )*multiple AS 'time13',COUNT(HOUR(r.currentTime)='14' OR NULL )*multiple AS 'time14',COUNT(HOUR(r.currentTime)='15' OR NULL )*multiple AS 'time15',COUNT(HOUR(r.currentTime)='16' OR NULL )*multiple AS 'time16',COUNT(HOUR(r.currentTime)='17' OR NULL )*multiple AS 'time17',COUNT(HOUR(r.currentTime)='18' OR NULL )*multiple AS 'time18',COUNT(HOUR(r.currentTime)='19' OR NULL )*multiple AS 'time19',COUNT(HOUR(r.currentTime)='20' OR NULL )*multiple AS 'time20',COUNT(t.id OR NULL)*multiple AS 'sum'
+        FROM smdproductionplan t,smddata r
+        WHERE DATE_FORMAT(r.currentTime,'%Y%m%d')=DATE_FORMAT(NOW(),'%Y%m%d') AND t.`produceName`=r.`model` AND DATE_FORMAT(r.currentTime,'%H') IN (8,9,10,11,12,13,14,15,16,17,18,19,20)
+        GROUP BY t.produceName,DATE_FORMAT(r.currentTime, '%d'))a;
+    </select>
+    <select id="getAllNightCode" resultType="Code">
+        SELECT t.multiple AS 'multiple',t.id AS 'id',t.produceName AS 'produceName',t.machine AS 'machine', t.planNum AS 'planNum',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '21' THEN num ELSE NULL END)*t.multiple AS  'time21',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '22' THEN num ELSE NULL END)*t.multiple AS  'time22',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '23' THEN num ELSE NULL END)*t.multiple AS  'time23',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '00' THEN num ELSE NULL END)*t.multiple AS  'time0',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '01' THEN num ELSE NULL END)*t.multiple AS  'time1',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '02' THEN num ELSE NULL END)*t.multiple AS  'time2',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '03' THEN num ELSE NULL END)*t.multiple AS  'time3',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '04' THEN num ELSE NULL END)*t.multiple AS  'time4',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '05' THEN num ELSE NULL END)*t.multiple AS  'time5',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '06' THEN num ELSE NULL END)*t.multiple AS  'time6',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '07' THEN num ELSE NULL END)*t.multiple AS  'time7',
+        (
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '21' THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '22' THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '23' THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '00' THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '01' THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '02' THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '03' THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '04' THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '05' THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '06' THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%H')  WHEN '07' THEN num ELSE 0 END)
+        )*t.multiple AS 'sum'
+        FROM smdproductionplan t,smddata r
+        WHERE DATE_FORMAT(r.currentTime,'%Y%m%d')=DATE_FORMAT(NOW(),'%Y%m%d') AND t.`produceName`=r.`model` AND DATE_FORMAT(r.currentTime,'%H') IN (21,22,23,0,1,2,3,4,5,6,7)
+                GROUP BY t.produceName LIMIT #{currentPage},#{num}
+    </select>
+    <select id="getAllNightCodeCount" resultType="int">
+        SELECT COUNT(1) FROM (SELECT t.multiple AS 'multiple',t.id AS 'id',t.produceName AS 'produceName', t.planNum AS 'planNum',COUNT(HOUR(r.currentTime)='21' OR NULL )*multiple AS 'time21',COUNT(HOUR(r.currentTime)='22' OR NULL )*multiple AS 'time22',COUNT(HOUR(r.currentTime)='23' OR NULL )*multiple AS 'time23',COUNT(HOUR(r.currentTime)='0' OR NULL )*multiple AS 'time0',COUNT(HOUR(r.currentTime)='1' OR NULL )*multiple AS 'time1',COUNT(HOUR(r.currentTime)='2' OR NULL )*multiple AS 'time2',COUNT(HOUR(r.currentTime)='3' OR NULL )*multiple AS 'time3',COUNT(HOUR(r.currentTime)='4' OR NULL )*multiple AS 'time4',COUNT(HOUR(r.currentTime)='5' OR NULL )*multiple AS 'time5',COUNT(HOUR(r.currentTime)='6' OR NULL )*multiple AS 'time6',COUNT(HOUR(r.currentTime)='7' OR NULL )*multiple AS 'time7',COUNT(t.id OR NULL)*multiple AS 'sum'
+        FROM smdproductionplan t,smddata r
+        WHERE DATE_FORMAT(r.currentTime,'%Y%m%d')=DATE_FORMAT(NOW(), '%Y%m%d') AND t.`produceName`=r.`model` AND DATE_FORMAT(r.currentTime,'%H') IN (21,22,23,0,1,2,3,4,5,6,7)
+        GROUP BY t.produceName,DATE_FORMAT(r.currentTime, '%d'))a;
+    </select>
+    <select id="getAllNextNightCode" resultType="Code">
+        SELECT t.multiple AS 'multiple',t.id AS 'id',t.produceName AS 'produceName',t.machine AS 'machine' ,t.planNum AS 'planNum',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(DATE_SUB(CURDATE(),INTERVAL 1 DAY),'%Y%m%d'),'21') THEN num ELSE NULL END)*t.multiple AS  'time21',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(DATE_SUB(CURDATE(),INTERVAL 1 DAY),'%Y%m%d'),'22') THEN num ELSE NULL END)*t.multiple AS  'time22',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(DATE_SUB(CURDATE(),INTERVAL 1 DAY),'%Y%m%d'),'23') THEN num ELSE NULL END)*t.multiple AS  'time23',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'00') THEN num ELSE NULL END)*t.multiple AS  'time0',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'01') THEN num ELSE NULL END)*t.multiple AS  'time1',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'02') THEN num ELSE NULL END)*t.multiple AS  'time2',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'03') THEN num ELSE NULL END)*t.multiple AS  'time3',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'04') THEN num ELSE NULL END)*t.multiple AS  'time4',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'05') THEN num ELSE NULL END)*t.multiple AS  'time5',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'06') THEN num ELSE NULL END)*t.multiple AS  'time6',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'07') THEN num ELSE NULL END)*t.multiple AS  'time7',
+        (
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(DATE_SUB(CURDATE(),INTERVAL 1 DAY),'%Y%m%d'),'21') THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(DATE_SUB(CURDATE(),INTERVAL 1 DAY),'%Y%m%d'),'22') THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(DATE_SUB(CURDATE(),INTERVAL 1 DAY),'%Y%m%d'),'23') THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'00') THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'01') THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'02') THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'03') THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'04') THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'05') THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'06') THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'07') THEN num ELSE 0 END)
+        )*t.multiple AS 'sum'
+        FROM smdproductionplan t,smddata r
+        WHERE t.`produceName`=r.`model` AND DATE_FORMAT(r.currentTime,'%H') IN (21,22,23,0,1,2,3,4,5,6,7)
+                GROUP BY t.produceName LIMIT #{currentPage},#{num}
+    </select>
+    <select id="getAllNextNightCodeCount" resultType="int">
+        SELECT COUNT(1) FROM (
+        SELECT t.multiple AS 'multiple',t.id AS 'id',t.produceName AS 'produceName', t.planNum AS 'planNum',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(DATE_SUB(CURDATE(),INTERVAL 1 DAY),'%Y%m%d'),'21') THEN num ELSE NULL END)*t.multiple AS  'time21',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(DATE_SUB(CURDATE(),INTERVAL 1 DAY),'%Y%m%d'),'22') THEN num ELSE NULL END)*t.multiple AS  'time22',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(DATE_SUB(CURDATE(),INTERVAL 1 DAY),'%Y%m%d'),'23') THEN num ELSE NULL END)*t.multiple AS  'time23',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'00') THEN num ELSE NULL END)*t.multiple AS  'time0',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'01') THEN num ELSE NULL END)*t.multiple AS  'time1',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'02') THEN num ELSE NULL END)*t.multiple AS  'time2',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'03') THEN num ELSE NULL END)*t.multiple AS  'time3',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'04') THEN num ELSE NULL END)*t.multiple AS  'time4',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'05') THEN num ELSE NULL END)*t.multiple AS  'time5',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'06') THEN num ELSE NULL END)*t.multiple AS  'time6',
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'07') THEN num ELSE NULL END)*t.multiple AS  'time7',
+        (
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(DATE_SUB(CURDATE(),INTERVAL 1 DAY),'%Y%m%d'),'21') THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(DATE_SUB(CURDATE(),INTERVAL 1 DAY),'%Y%m%d'),'22') THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(DATE_SUB(CURDATE(),INTERVAL 1 DAY),'%Y%m%d'),'23') THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'00') THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'01') THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'02') THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'03') THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'04') THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'05') THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'06') THEN num ELSE 0 END)+
+        SUM(CASE DATE_FORMAT(r.currentTime,'%Y%m%d%H')  WHEN CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'07') THEN num ELSE 0 END)
+        )*t.multiple AS 'sum'
+        FROM smdproductionplan t,smddata r
+        WHERE t.`produceName`=r.`model` AND DATE_FORMAT(r.currentTime,'%H') IN (21,22,23,0,1,2,3,4,5,6,7)
+                GROUP BY t.produceName
+        ) AS a
+    </select>
+    <insert id="addNewTestCode" parameterType="smdproductionplan">
+        Insert into smdproductionplan(produceName,machine,planNum,multiple) VALUES(#{produceName},#{machine},#{planNum},#{multiple})
+    </insert>
+    <update id="updateTestCode" parameterType="smdproductionplan">
+        UPDATE smdproductionplan SET planNum = #{planNum} WHERE id = #{id}
+    </update>
+    <select id="getTestCodeById" resultType="smdproductionplan">
+        SELECT * FROM smdproductionplan WHERE id = #{id}
+    </select>
+    <select id="getAllTestCode" resultType="smdproductionplan">
+        SELECT * FROM smdproductionplan
+    </select>
+    <delete id="deleteTestCodeById" parameterType="int">
+        DELETE FROM smdproductionplan WHERE id = #{id}
+    </delete>
+    <delete id="deleteRaspCode">
+        DELETE FROM smddata WHERE DATEDIFF(CURDATE(), currentTime)>=2
+    </delete>
+</mapper>
